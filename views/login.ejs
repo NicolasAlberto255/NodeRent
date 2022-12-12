@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Login</title>
+    <%- include('partials/head') %>
+</head>
+<body id="body">
+    <section class="h-100 gradient-form" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-xl-10">
+              <div class="card rounded-3 text-black">
+                <div class="row g-0">
+                  <div class="col-lg-6">
+                    <div class="card-body p-md-5 mx-md-4">
+      
+                      <div class="text-center">
+                        <img src="/img/brand-logo.png"
+                          style="width: 185px;" alt="logo">
+                        <h4 class="mt-1 mb-5 pb-1">Inciar Sesion</h4>
+                      </div>
+      
+                      <form action="/auth" method="POST">
+                        <div class="form-outline mb-4">
+                          <input type="email" id="txt_mail" name="txt_mail" class="form-control"
+                            placeholder="jane.doe@mail.cl" required/>
+                          <label class="form-label" for="txt_mail">Correo Electronico</label>
+                        </div>
+      
+                        <div class="form-outline mb-4">
+                          <input type="password" id="txt_pass" name="txt_pass" class="form-control" 
+                          placeholder="***********" required/>
+                          <label class="form-label" for="txt_pass">Password</label>
+                        </div>
+                        <div class="text-center pt-1 mb-5 pb-1">
+                            <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" value="Login " type="submit">Entrar</button>
+                            <!--
+                            <a class="text-muted" href="#!">Olvidaste tu contrasena</a>
+                            -->
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center pb-4">
+                          <p class="mb-0 me-2">No tienes una cuenta?</p>
+                          <button type="button" class="btn btn-outline-success">Crear cuenta</button>
+                        </div>
+      
+                      </form>
+      
+                    </div>
+                  </div>
+                  <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                    <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                      <h4 class="mb-4">Aun no tienes tu cuenta Rent?</h4>
+                      <p class="small mb-0">Con una cuenta Rent podras reservar cualquier departamento de nuestro amplio catalogo.
+                        Tambien podras visualizar tus reservas, hacer cambios en ella en horario y fechas.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert != "undefined"){ %>
+      <script>
+        Swal.fire({
+          title: '<%= alertTitle %>',
+          text: '<%= alertMessage %>',
+          icon: '<%= alertIcon %>',
+          showConfirmButton: <%= showConfirmButton %>,
+          timer: <%= timer %>
+        }).then(()=>{
+          window.location='/<%= ruta %>'
+        })
+      </script>
+      <%}%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

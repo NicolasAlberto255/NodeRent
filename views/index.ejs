@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<head>
+    <title></title>
+    <%- include('partials/head') %>
+
+    <script>
+        Listardeptos()
+        fillServicios()
+        fillRegiones()
+
+        function Listardeptos() {
+
+            const url = 'http://apirent-env.eba-n7bvnjak.us-east-1.elasticbeanstalk.com/departamentos/departamentos';
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "https://localhost",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                },
+            })
+            .then(res => res.json())
+            .then(response => {
+                
+               
+                var d1 = document.getElementById('info');
+                for (let x of response){
+                    //console.log(x)
+                    d1.insertAdjacentHTML('afterbegin','<div class="col"><div class="card" style="width: 30rem;"><img src="https://images.estilosdeco.com/2019/02/depto-pequeno-dormitorio-altillo-8-750x500.jpg" class="card-img-top"><div class="card-body"><h5 class="card-title">'+x.nombreDepartamento+'</h5><p class="card-title">'+x.nombreRegionDepto+'</p><p class="card-text"><i class="fa-solid fa-bath"></i> '+x.nBanos+' <i class="fa-solid fa-bed"></i> '+x.nHabitacion+'</p><hr><% if(login){ %><button value="'+x.idDepartamentos+'" onclick="addBooking(this.value)" class="btn btn-outline-success float-end" style="border-radius:50px; ">Reservar</button><%} else {%><a href="login" class="btn btn-outline-success float-end" style="border-radius:50px;" >Inicia Sesion</a><%}%><h6>Valor por noche: $'+x.vNoche+'</h6></div></div><br></div>');
+                }
+            })
+            .catch(function(error) {
+                console.error("¡Error!", error);
+            })
+
+            
+        }
+        function fillServicios(){
+            const select = document.getElementById("select_region");
+            const url = 'http://apirent-env.eba-n7bvnjak.us-east-1.elasticbeanstalk.com/servicio/servicios';
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "https://localhost",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                },
+            })
+            .then(res => res.json())
+            .then(response => {
+                let d1 = document.getElementById('servicios');
+                
+                for (let element of response) {
+                    d1.insertAdjacentHTML('afterbegin','<div class="form-check"><input class="form-check-input" type="checkbox" value="'+element.idServicios+'" id="'+element.idServicios+'"><label class="form-check-label" for="'+element.id+'">'+element.nombreServicios+'</label></div>');
+                    
+                }
+            })
+            .catch(function(error) {
+                console.error("¡Error!", error);
+            })
+        }
+
+        function fillRegiones(){
+            const url = 'http://apirent-env.eba-n7bvnjak.us-east-1.elasticbeanstalk.com/region/regiones';
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "https://localhost",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                },
+            })
+            .then(res => res.json())
+            .then(response => {
+                // console.log("Las categorías son:", lista_de_categorias);
+                // alert('HAY ' + lista_de_categorias.length) Puedes poner este alert para ver si la llamada POST te devuelve algo
+                
+                const select = document.getElementById("select_region");
+                for (let element of response) {
+                    let nuevaOpcion = document.createElement("option");
+                    nuevaOpcion.value = element.idRegion;
+                    nuevaOpcion.text = element.nombreRegion;
+                    //select.add(nuevaOpcion);
+                    select.appendChild(nuevaOpcion); 
+                }
+            })
+            .catch(function(error) {
+                console.error("¡Error!", error);
+            })
+        }
+
+        function fillComunas(regionID){
+            const url = 'http://apirent-env.eba-n7bvnjak.us-east-1.elasticbeanstalk.com/comuna/comunasByRegionId?id='+regionID;
+            document.getElementById("select_comuna").innerHTML = "";
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "https://localhost",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                },
+            })
+            .then(res => res.json())
+            .then(response => {
+                // console.log("Las categorías son:", lista_de_categorias);
+                // alert('HAY ' + lista_de_categorias.length) Puedes poner este alert para ver si la llamada POST te devuelve algo
+                
+                const select = document.getElementById("select_comuna");
+                for (let element of response) {
+                    let nuevaOpcion = document.createElement("option");
+                    nuevaOpcion.value = element.idComuna;
+                    nuevaOpcion.text = element.nombreComuna;
+                    //select.add(nuevaOpcion);
+                    select.appendChild(nuevaOpcion); 
+                }
+            })
+            .catch(function(error) {
+                console.error("¡Error!", error);
+            })
+        }
+        
+
+        function addBooking(id){
+            document.getElementById('id_depto').value = id
+            //console.log(id)
+            let myModal = new bootstrap.Modal(document.getElementById('m_booking'))
+            myModal.show()
+
+            const url = 'http://apirent-env.eba-n7bvnjak.us-east-1.elasticbeanstalk.com/departamentos/departamentosGet/'+id;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "https://localhost",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                },
+            })
+            .then(res => res.json())
+            .then(response => {
+               document.getElementById('m_bookingLabel').innerText = "Reserva para " + response.nombreDepartamento
+            })
+            .catch(function(error) {
+                console.error("¡Error!", error);
+            })
+            
+        }
+        function makeBooking(){
+
+            
+            let booking_ = []
+            let date = new Date()
+
+            let day = date.getDate()
+            if(day <10){
+                day = "0" + day
+            }
+            let month = date.getMonth() + 1
+            let year = date.getFullYear()
+            let fecha_ = ''
+            if(month < 10){
+                fecha_ = `${year}-0${month}-${day}`
+            }else{
+                fecha_ = `${year}-${month}-${day}`
+            }
+
+
+            //console.log(fecha_)
+            booking_.push(
+                {
+                    idReserva:0,
+                    fechaInicio:document.getElementById('f_llegada').value + "T00:00:00",
+                    fechaFin:document.getElementById('f_salida').value + "T00:00:00",
+                    fechaCreacion:fecha_+"T00:00:00",
+                    precioAbono:parseInt(document.getElementById('p_abono').value),
+                    precioTotal:parseInt(document.getElementById('p_total').value),
+                    estadoReserva: 'Reservado',
+                    cntPersonas:parseInt(document.getElementById('cnt_p').value),
+                    usuarios:[
+                        {
+                            idUsuario: <%if(login){%>
+                                            <%= userid %>
+                                        <%}else{%>
+                                            0
+                                        <% } %>
+                        }
+                    ],
+                    departamentos:[{
+                        idDepartamentos:parseInt(document.getElementById('id_depto').value)
+                    }],
+                    servicios:[]
+                }
+                );
+            let count_servicios = document.getElementsByClassName('form-check-input').length 
+            for (let i = 1; i <= count_servicios; i++) {
+                if(document.getElementById(i).checked == true){
+                    booking_[0].servicios.push(
+                        {
+                            idServicios:parseInt(document.getElementById(i).value)
+                        }
+                    )
+                }   
+            }
+            console.log(booking_[0])
+            //console.log(JSON.stringify(booking_[0]))
+
+            //fetch('http://apirent-env.eba-n7bvnjak.us-east-1.elasticbeanstalk.com/reserva/reservaAdd', {
+            //    method: 'POST',
+            //    body: JSON.stringify(booking_[0]),
+            //    headers: {
+            //        'Content-Type': 'application/json'
+            //        //"Access-Control-Allow-Origin": "https://localhost",
+            //        //"Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            //    },
+            //})
+            //.then(function(response) {
+            //    return response;
+            //})
+            //.then(data => {
+            //    console.log(data);
+            //    if(data.ok == true)
+            //    {
+            //        let modal_add = new bootstrap.Modal(document.getElementById('m_booking'))
+            //        modal_add.hide()
+            //        let modal_ok = new bootstrap.Modal(document.getElementById('modal_ok'))
+            //        modal_ok.show()
+//
+            //    }
+            //})
+        }
+
+        async function postData(url, data_){
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data_),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+        }
+
+
+        function listar_info(){
+
+            let d1 = document.getElementById('info');
+            for (i in datos_) {
+                d1.insertAdjacentHTML('afterbegin','<li class="list-group-item">'+datos[i].nDepto+'</li>');
+            }
+        }
+
+        function addacom(){
+            var num_row = document.getElementsByClassName('tr_acom').length + 1;
+            document.getElementById("t_bodyacom").insertAdjacentHTML("afterBegin",
+            '<tr class="tr_acom" id="tr'+num_row+'"><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td></tr>')
+        }
+
+        function removeacom(){
+
+            let trs = document.getElementsByClassName("tr_acom").length;
+            if(trs == 0)
+            {
+                alert('No hay acompañantes');
+            }
+            else
+            {
+                document.getElementById("tr"+trs).remove();
+            }
+        }
+    </script>
+</head>
+<body class="body">
+    <%- include('partials/navigation') %>
+
+    
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://imgclasificados3.emol.com/Proyectos/imagenes//PR_FOTO_4624_1.jpg" class="d-block w-100" height="700" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Busca lo que mas te acomode.</h5>
+              <p>Contamos con gran variedades de deptos que se adaptan a las necesidades de todos!</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://img.freepik.com/fotos-premium/habitacion-moderna-interior-cerca-playa-cielo-vista-al-mar-representacion-3d_33739-16.jpg?w=2000" class="d-block w-100"  height="700" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Las mejores vistas.</h5>
+              <p>Ven y sorprendete con las vistas al mar que tienen nuestras locaciones VIP.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://www.holamujer.cl/wp-content/uploads/2021/04/Compra-Online.jpg" class="d-block w-100" height="700" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Reservas Online</h5>
+              <p>Puedes realizar tu reserva desde la misma pagina web con solo 3 clicks!</p>
+            </div>
+          </div>
+        </div> 
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+<br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Escribe una direccion para mostrar los departamentos disponibles.">
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" id="select_region" onchange="fillComunas(this.value)">
+                    <option value="0">Region</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" id="select_comuna">
+                    <option value="0">Comuna</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success"><i class="fa-solid fa-magnifying-glass"></i> Buscar </button>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="container">
+        <p>Todos los departamentos.</p>
+        <div class="row" id="info">
+            
+        </div>
+    </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="modal_ok" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
+        <div class="modal-body">
+            <h1>Reserva creada con exito!</h1>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="m_booking" tabindex="-1" aria-labelledby="m_bookingLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="m_bookingLabel">Reserva para</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" hidden id="id_depto">
+                
+                <h2>Datos de la reserva</h2>
+                <hr>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <label for="f_llegada">Check In</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon6"><i class="fa-solid fa-calendar-days"></i></span>
+                                <input type="date" class="form-control" id="f_llegada" aria-describedby="basic-addon6">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="f_llegada">Check Out</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon6"><i class="fa-solid fa-calendar-days"></i></span>
+                                <input type="date" class="form-control" id="f_salida" aria-describedby="basic-addon6">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon7"><i class="fa-solid fa-dollar"></i></span>
+                                <input type="text" class="form-control" id="p_abono" placeholder="Precio Abono" aria-describedby="basic-addon7">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h2>Servicios</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="servicios">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h2>Acompañantes</h2>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Edad</th>
+                                        <th>Rut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="t_bodyacom">
+
+                                </tbody>
+                            </table>
+                            <center>
+                                <button class="btn btn-outline-danger" onclick="removeacom()">-</button>
+                                <button class="btn btn-outline-success" onclick="addacom()">+</button>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="makeBooking()">Siguiente</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
