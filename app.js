@@ -7,7 +7,6 @@ const session = require ('express-session');
 const bcryptjs = require  ('bcryptjs');
 const app = express();
 const oracledb = require('oracledb');
-const socketio = socketIOClient('http://noderent-env.eba-ieanie3a.us-east-1.elasticbeanstalk.com/');
 
 //const __dirname = dirname(fileURLToPath(import.meta.url))
 
