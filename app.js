@@ -1,5 +1,5 @@
 
-var port = process.env.PORT || 6000;
+var port = process.env.PORT || 3000;
 
 const express = require("express"); // Asignamos el modulo express a una constante con el mismo nombre
 //import indexRoutes from './routes/routes.js';
