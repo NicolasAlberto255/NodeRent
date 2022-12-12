@@ -4,7 +4,7 @@
   "description": "Aplicacion Web para reservas de departamentos",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/apps.js"
   },
   "keywords": [],
   "author": "",
