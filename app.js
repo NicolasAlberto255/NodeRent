@@ -1,3 +1,6 @@
+
+var port = process.env.PORT || 3000;
+
 const express = require("express"); // Asignamos el modulo express a una constante con el mismo nombre
 //import indexRoutes from './routes/routes.js';
 const {dirname, join} = require ('path')
@@ -141,6 +144,6 @@ app.get('/logout',(req, res)=>{
 
 
 
-app.listen(5000, (req, res)=>{
+app.listen(port, (req, res)=>{
     console.log('Server conected');
 })
